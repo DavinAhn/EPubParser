@@ -1,0 +1,4 @@
+use_frameworks!
+target 'EPubParser-Example' do
+  pod 'EPubParser', :path => '../'
+end

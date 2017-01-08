@@ -20,6 +20,8 @@
 		830F4D581E22338600E6379D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F4D4F1E22338600E6379D /* zip.c */; };
 		830F4D591E22338600E6379D /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D501E22338600E6379D /* zip.h */; };
 		830F4D5C1E22339900E6379D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F4D5B1E22339900E6379D /* libz.tbd */; };
+		830F4D821E22843800E6379D /* Sample.epub in Resources */ = {isa = PBXBuildFile; fileRef = 830F4D811E22843800E6379D /* Sample.epub */; };
+		830F4D851E22960800E6379D /* Sample.cbz in Resources */ = {isa = PBXBuildFile; fileRef = 830F4D841E22960800E6379D /* Sample.cbz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		830F4D4F1E22338600E6379D /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
 		830F4D501E22338600E6379D /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		830F4D5B1E22339900E6379D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		830F4D811E22843800E6379D /* Sample.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sample.epub; sourceTree = "<group>"; };
+		830F4D841E22960800E6379D /* Sample.cbz */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sample.cbz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,7 @@
 			children = (
 				830F1CC21E222A0B00E6379D /* EPubParserTests.swift */,
 				830F1CC41E222A0B00E6379D /* Info.plist */,
+				830F4D801E22843800E6379D /* Sample */,
 			);
 			path = EPubParserTests;
 			sourceTree = "<group>";
@@ -131,6 +136,15 @@
 				830F4D501E22338600E6379D /* zip.h */,
 			);
 			path = minizip;
+			sourceTree = "<group>";
+		};
+		830F4D801E22843800E6379D /* Sample */ = {
+			isa = PBXGroup;
+			children = (
+				830F4D841E22960800E6379D /* Sample.cbz */,
+				830F4D811E22843800E6379D /* Sample.epub */,
+			);
+			path = Sample;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,6 +254,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F4D821E22843800E6379D /* Sample.epub in Resources */,
+				830F4D851E22960800E6379D /* Sample.cbz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

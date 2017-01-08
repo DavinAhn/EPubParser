@@ -12,6 +12,16 @@
 		830F1CC51E222A0B00E6379D /* EPubParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F1CB71E222A0B00E6379D /* EPubParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		830F1CD01E222A8300E6379D /* EPubHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830F1CCE1E222A8300E6379D /* EPubHelper.swift */; };
 		830F1CD11E222A8300E6379D /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830F1CCF1E222A8300E6379D /* EPubParser.swift */; };
+		830F4D511E22338600E6379D /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D471E22338600E6379D /* crypt.h */; };
+		830F4D521E22338600E6379D /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F4D481E22338600E6379D /* ioapi.c */; };
+		830F4D531E22338600E6379D /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D491E22338600E6379D /* ioapi.h */; };
+		830F4D541E22338600E6379D /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F4D4B1E22338600E6379D /* mztools.c */; };
+		830F4D551E22338600E6379D /* mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D4C1E22338600E6379D /* mztools.h */; };
+		830F4D561E22338600E6379D /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F4D4D1E22338600E6379D /* unzip.c */; };
+		830F4D571E22338600E6379D /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D4E1E22338600E6379D /* unzip.h */; };
+		830F4D581E22338600E6379D /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F4D4F1E22338600E6379D /* zip.c */; };
+		830F4D591E22338600E6379D /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F4D501E22338600E6379D /* zip.h */; };
+		830F4D5C1E22339900E6379D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F4D5B1E22339900E6379D /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +46,17 @@
 		830F1CD21E222ADF00E6379D /* EPubParser.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; path = EPubParser.podspec; sourceTree = "<group>"; };
 		830F1CD31E222AEB00E6379D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		830F1CD51E222AF400E6379D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		830F4D471E22338600E6379D /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		830F4D481E22338600E6379D /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		830F4D491E22338600E6379D /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		830F4D4A1E22338600E6379D /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		830F4D4B1E22338600E6379D /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		830F4D4C1E22338600E6379D /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		830F4D4D1E22338600E6379D /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		830F4D4E1E22338600E6379D /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		830F4D4F1E22338600E6379D /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		830F4D501E22338600E6379D /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		830F4D5B1E22339900E6379D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F4D5C1E22339900E6379D /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,9 +104,11 @@
 			isa = PBXGroup;
 			children = (
 				830F1CB81E222A0B00E6379D /* Info.plist */,
+				830F4D5B1E22339900E6379D /* libz.tbd */,
 				830F1CB71E222A0B00E6379D /* EPubParser.h */,
 				830F1CCE1E222A8300E6379D /* EPubHelper.swift */,
 				830F1CCF1E222A8300E6379D /* EPubParser.swift */,
+				830F4D461E22338600E6379D /* minizip */,
 			);
 			path = EPubParser;
 			sourceTree = "<group>";
@@ -98,6 +122,23 @@
 			path = EPubParserTests;
 			sourceTree = "<group>";
 		};
+		830F4D461E22338600E6379D /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				830F4D471E22338600E6379D /* crypt.h */,
+				830F4D481E22338600E6379D /* ioapi.c */,
+				830F4D491E22338600E6379D /* ioapi.h */,
+				830F4D4A1E22338600E6379D /* module.modulemap */,
+				830F4D4B1E22338600E6379D /* mztools.c */,
+				830F4D4C1E22338600E6379D /* mztools.h */,
+				830F4D4D1E22338600E6379D /* unzip.c */,
+				830F4D4E1E22338600E6379D /* unzip.h */,
+				830F4D4F1E22338600E6379D /* zip.c */,
+				830F4D501E22338600E6379D /* zip.h */,
+			);
+			path = minizip;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -105,7 +146,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F4D591E22338600E6379D /* zip.h in Headers */,
+				830F4D531E22338600E6379D /* ioapi.h in Headers */,
+				830F4D571E22338600E6379D /* unzip.h in Headers */,
 				830F1CC51E222A0B00E6379D /* EPubParser.h in Headers */,
+				830F4D511E22338600E6379D /* crypt.h in Headers */,
+				830F4D551E22338600E6379D /* mztools.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,7 +257,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F4D521E22338600E6379D /* ioapi.c in Sources */,
+				830F4D561E22338600E6379D /* unzip.c in Sources */,
 				830F1CD11E222A8300E6379D /* EPubParser.swift in Sources */,
+				830F4D581E22338600E6379D /* zip.c in Sources */,
+				830F4D541E22338600E6379D /* mztools.c in Sources */,
 				830F1CD01E222A8300E6379D /* EPubHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,6 +387,7 @@
 		830F1CC91E222A0B00E6379D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -347,10 +398,11 @@
 				INFOPLIST_FILE = EPubParser/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/EPubParser/**";
 				PRODUCT_BUNDLE_IDENTIFIER = com.davin.EPubParser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/EPubParser/minizip/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -359,6 +411,7 @@
 		830F1CCA1E222A0B00E6379D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -369,11 +422,12 @@
 				INFOPLIST_FILE = EPubParser/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/EPubParser/**";
 				PRODUCT_BUNDLE_IDENTIFIER = com.davin.EPubParser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_VERSION = 3.0;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/EPubParser/minizip/**";
 			};
 			name = Release;
 		};

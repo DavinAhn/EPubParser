@@ -68,13 +68,16 @@ internal extension String {
 }
 
 fileprivate extension Date {
-    static var Since1980: Date {
+    static func dateFrom(tmuDate: tm_unz_s) -> Date {
         var dateComponents = DateComponents()
-        dateComponents.day = 1
-        dateComponents.month = 1
-        dateComponents.year = 1980
-        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-        return calendar.date(from: dateComponents)!
+        dateComponents.second = Int(tmuDate.tm_sec)
+        dateComponents.minute = Int(tmuDate.tm_min)
+        dateComponents.hour = Int(tmuDate.tm_hour)
+        dateComponents.day = Int(tmuDate.tm_mday)
+        dateComponents.month = Int(tmuDate.tm_mon) + 1
+        dateComponents.year = Int(tmuDate.tm_year)
+        let calendar = Calendar.current
+        return calendar.date(from: dateComponents) ?? Date()
     }
 }
 
@@ -291,7 +294,7 @@ public class EPubHelper {
             if file != nil {
                 fclose(file)
                 if fileInfo.dosDate != 0 {
-                    let originDate = Date(timeInterval: TimeInterval(fileInfo.dosDate), since: Date.Since1980)
+                    let originDate = Date.dateFrom(tmuDate: fileInfo.tmu_date)
                     do {
                         let attr = [FileAttributeKey.modificationDate: originDate]
                         try fileManager.setAttributes(attr, ofItemAtPath: fullPath)

@@ -19,18 +19,19 @@ public enum UnzipError: Error {
     case unzipFail(path: String)
     case crcError(path: String)
     case encodingError(path: String)
+    case invalidPackaging(path: String)
 }
 
 fileprivate struct UnzipOptionKey: RawRepresentable, Hashable {
-    var rawValue: String
+    fileprivate var rawValue: String
     
     fileprivate var hashValue: Int {
         return rawValue.hash
     }
     
-    static let toPath = UnzipOptionKey(rawValue: "toPath")
-    static let overwrite = UnzipOptionKey(rawValue: "overwrite")
-    static let checkCrc = UnzipOptionKey(rawValue: "checkCrc")
+    fileprivate static let toPath = UnzipOptionKey(rawValue: "toPath")
+    fileprivate static let overwrite = UnzipOptionKey(rawValue: "overwrite")
+    fileprivate static let checkCrc = UnzipOptionKey(rawValue: "checkCrc")
 }
 
 internal extension String {
@@ -81,34 +82,74 @@ fileprivate extension Date {
     }
 }
 
-public class EPubHelper {
+internal class EPubHelper {
     fileprivate static var supportedZipExtensions = ["epub", "zip"]
     fileprivate static var unzipBufferSize: UInt32 = 4096
+    fileprivate static var zipHeaderSize = 58
     
-    public class func entriesOfZip(at: URL, password: String?) throws -> [String] {
-        if !at.isFileURL {
-            throw UnzipError.notFile(url: at)
-        }
-        return try entriesOfZip(atPath: at.path, password: password)
+    internal class func validateZipAt(_ path: String) throws {
+        try validateZipAt(URL(fileURLWithPath: path))
     }
     
-    public class func entriesOfZip(atPath: String, password: String?) throws -> [String] {
+    internal class func validateZipAt(_ url: URL) throws {
+        if !url.isFileURL {
+            throw UnzipError.notFile(url: url)
+        }
+        
+        let fileManager = FileManager.default
+        let path = url.path
+        
+        if !fileManager.fileExists(atPath: path) {
+            throw UnzipError.fileNotFound(path: path)
+        }
+        
+        if !supportedZipExtensions.contains(path.pathExtension.lowercased()) {
+            throw UnzipError.fileNotSupport(path: path)
+        }
+        
+        guard let data = try? Data(contentsOf: url), data.count >= zipHeaderSize else {
+            throw UnzipError.openFail(path: path)
+        }
+        let bytes = [UInt8](data)
+        let fileSignature = String(bytes: bytes[0..<2], encoding: String.Encoding.ascii)
+        let fileNameSize = UInt32(littleEndian: Data(bytes: bytes[26..<28]).withUnsafeBytes { $0.pointee })
+        let extraFieldSize = UInt32(littleEndian: Data(bytes: bytes[28..<30]).withUnsafeBytes { $0.pointee })
+        let fileName = String(bytes: bytes[30..<38], encoding: String.Encoding.ascii)
+        let mimetype = String(bytes: bytes[38..<zipHeaderSize], encoding: String.Encoding.ascii)
+        
+        if fileSignature != "PK"
+            || fileNameSize != 8
+            || extraFieldSize != 0
+            || fileName != "mimetype"
+            || mimetype != "application/epub+zip" {
+            throw UnzipError.invalidPackaging(path: path)
+        }
+    }
+    
+    internal class func entriesOfZipAt(_ url: URL, password: String?) throws -> [String] {
+        if !url.isFileURL {
+            throw UnzipError.notFile(url: url)
+        }
+        return try entriesOfZipAt(url.path, password: password)
+    }
+    
+    internal class func entriesOfZipAt(_ path: String, password: String?) throws -> [String] {
         let fileManager = FileManager.default
         
-        if !fileManager.fileExists(atPath: atPath) {
-            throw UnzipError.fileNotFound(path: atPath)
+        if !fileManager.fileExists(atPath: path) {
+            throw UnzipError.fileNotFound(path: path)
         }
         
-        if !supportedZipExtensions.contains(atPath.pathExtension.lowercased()) {
-            throw UnzipError.fileNotSupport(path: atPath)
+        if !supportedZipExtensions.contains(path.pathExtension.lowercased()) {
+            throw UnzipError.fileNotSupport(path: path)
         }
         
-        return try unzip(atPath: atPath, password: password, options: [
+        return try unzipAt(path, password: password, options: [
             UnzipOptionKey.checkCrc: false
         ])
     }
     
-    public class func dataOf(zipPath: String, atEntryPath: String, password: String?) throws -> Data {
+    internal class func dataOf(_ entryPath: String, atZipPath zipPath: String, password: String?) throws -> Data {
         let fileManager = FileManager.default
         
         if !fileManager.fileExists(atPath: zipPath) {
@@ -127,14 +168,14 @@ public class EPubHelper {
             throw UnzipError.openFail(path: zipPath)
         }
         
-        guard let path = atEntryPath.cString(using: String.Encoding.ascii) else {
-            throw UnzipError.encodingError(path: atEntryPath)
+        guard let path = entryPath.cString(using: String.Encoding.ascii) else {
+            throw UnzipError.encodingError(path: entryPath)
         }
         var ret = unzLocateFile(zip, path) { (_, fileName1, fileName2) -> Int32 in
             return strcasecmp(fileName1, fileName2)
         }
         if ret != UNZ_OK {
-            throw UnzipError.fileNotFound(path: atEntryPath)
+            throw UnzipError.fileNotFound(path: entryPath)
         }
         
         if let password = password?.cString(using: String.Encoding.ascii) {
@@ -143,7 +184,7 @@ public class EPubHelper {
             ret = unzOpenCurrentFile(zip)
         }
         if ret != UNZ_OK {
-            throw UnzipError.unzipFail(path: atEntryPath)
+            throw UnzipError.unzipFail(path: entryPath)
         }
         
         let data = NSMutableData()
@@ -161,24 +202,24 @@ public class EPubHelper {
         return data as Data
     }
     
-    public class func unzip(at: URL, to: URL, password: String?, overwrite: Bool = true) throws -> [String] {
-        if !at.isFileURL {
-            throw UnzipError.notFile(url: at)
+    internal class func unzipAt(_ url: URL, to: URL, password: String?, overwrite: Bool = true) throws -> [String] {
+        if !url.isFileURL {
+            throw UnzipError.notFile(url: url)
         } else if !to.isFileURL {
             throw UnzipError.notFile(url: to)
         }
-        return try unzip(atPath: at.path, toPath: to.path, password: password, overwrite: overwrite)
+        return try unzipAt(url.path, toPath: to.path, password: password, overwrite: overwrite)
     }
     
-    public class func unzip(atPath: String, toPath: String, password: String?, overwrite: Bool = true) throws -> [String] {
+    internal class func unzipAt(_ path: String, toPath: String, password: String?, overwrite: Bool = true) throws -> [String] {
         let fileManager = FileManager.default
         
-        if !fileManager.fileExists(atPath: atPath) {
-            throw UnzipError.fileNotFound(path: atPath)
+        if !fileManager.fileExists(atPath: path) {
+            throw UnzipError.fileNotFound(path: path)
         }
         
-        if !supportedZipExtensions.contains(atPath.pathExtension.lowercased()) {
-            throw UnzipError.fileNotSupport(path: atPath)
+        if !supportedZipExtensions.contains(path.pathExtension.lowercased()) {
+            throw UnzipError.fileNotSupport(path: path)
         }
         
         var isDirectory: ObjCBool = false
@@ -194,19 +235,19 @@ public class EPubHelper {
             try fileManager.createDirectory(atPath: toPath, withIntermediateDirectories: true, attributes: nil)
         }
         
-        return try unzip(atPath: atPath, password: password, options: [
+        return try unzipAt(path, password: password, options: [
             UnzipOptionKey.toPath: toPath,
             UnzipOptionKey.overwrite: overwrite
         ])
     }
     
-    fileprivate class func unzip(atPath: String, password: String?, options: [UnzipOptionKey: Any]) throws -> [String] {
-        guard let zip = unzOpen64(atPath) else {
-            throw UnzipError.openFail(path: atPath)
+    fileprivate class func unzipAt(_ path: String, password: String?, options: [UnzipOptionKey: Any]) throws -> [String] {
+        guard let zip = unzOpen64(path) else {
+            throw UnzipError.openFail(path: path)
         }
         defer { unzClose(zip) }
         if unzGoToFirstFile(zip) != UNZ_OK {
-            throw UnzipError.openFail(path: atPath)
+            throw UnzipError.openFail(path: path)
         }
         
         let fileManager = FileManager.default
@@ -225,7 +266,7 @@ public class EPubHelper {
                 ret = unzOpenCurrentFile(zip)
             }
             if ret != UNZ_OK {
-                throw UnzipError.unzipFail(path: atPath)
+                throw UnzipError.unzipFail(path: path)
             }
             
             var fileInfo = unz_file_info64()
@@ -233,7 +274,7 @@ public class EPubHelper {
             ret = unzGetCurrentFileInfo64(zip, &fileInfo, nil, 0, nil, 0, nil, 0)
             if ret != UNZ_OK {
                 unzCloseCurrentFile(zip)
-                throw UnzipError.unzipFail(path: atPath)
+                throw UnzipError.unzipFail(path: path)
             }
             
             let fileNameSize = Int(fileInfo.size_filename) + 1
@@ -244,7 +285,7 @@ public class EPubHelper {
             var entryPath = String(cString: fileName)
             if entryPath.characters.isEmpty {
                 unzCloseCurrentFile(zip)
-                throw UnzipError.unzipFail(path: atPath)
+                throw UnzipError.unzipFail(path: path)
             }
             
             var isDirectory = false
@@ -263,7 +304,7 @@ public class EPubHelper {
             if readOnly {
                 let crc_ret = unzCloseCurrentFile(zip)
                 if checkCrc && crc_ret == UNZ_CRCERROR {
-                    throw UnzipError.crcError(path: atPath)
+                    throw UnzipError.crcError(path: path)
                 }
                 ret = unzGoToNextFile(zip)
                 continue
@@ -304,7 +345,7 @@ public class EPubHelper {
             
             let crc_ret = unzCloseCurrentFile(zip)
             if checkCrc && crc_ret == UNZ_CRCERROR {
-                throw UnzipError.crcError(path: atPath)
+                throw UnzipError.crcError(path: path)
             }
             ret = unzGoToNextFile(zip)
         } while (ret == UNZ_OK && ret != UNZ_END_OF_LIST_OF_FILE)

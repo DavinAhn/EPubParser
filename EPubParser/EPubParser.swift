@@ -37,6 +37,11 @@ public class EPubParser {
             if configuration.shouldValidatePackage {
                 try EPubHelper.validateZipAt(path)
             }
+            if let toPath = toPath {
+                entries += try EPubHelper.unzipAt(path, toPath: toPath, password: password)
+            } else {
+                entries += try EPubHelper.entriesOfZipAt(path, password: password)
+            }
         } catch {  }
     }
 }
